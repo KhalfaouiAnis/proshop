@@ -7,7 +7,7 @@ import {
 } from "./reducers/productReducers";
 import {userLoginReducer, userRegisterReducer, userDetailsReducer, userUpdateProfileReducer} from './reducers/userReducers'
 import { cartReducer } from "./reducers/cartReducers";
-import { orderCreateReducer, orderDetailsReducer, ordePayReducer } from "./reducers/orderReducers";
+import { orderCreateReducer, orderDetailsReducer, ordePayReducer,orderListMyReducer } from "./reducers/orderReducers";
 
 const reducer = combineReducers({
   productList: productListReducer,
@@ -19,7 +19,8 @@ const reducer = combineReducers({
   userUpdateProfile: userUpdateProfileReducer,
   orderCreate: orderCreateReducer,
   orderDetails: orderDetailsReducer,
-  orderPay: ordePayReducer
+  orderPay: ordePayReducer,
+  orderListMy:orderListMyReducer
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")
