@@ -13,6 +13,7 @@ import {
   ORDER_LIST_MY_SUCCESS,
   ORDER_LIST_MY_FAIL,
 } from "../constants/orderConstants";
+import { logout } from './userActions'
 import axios from "axios";
 
 export const createOrder = (order) => async (dispatch, getState) => {
@@ -78,10 +79,7 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
   }
 };
 
-export const listMyOrders = () => async (
-  dispatch,
-  getState
-) => {
+export const listMyOrders = () => async (dispatch, getState) => {
   try {
     dispatch({
       type: ORDER_LIST_MY_REQUEST,
@@ -96,18 +94,24 @@ export const listMyOrders = () => async (
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.get(`/api/orders/mayorders` ,config);
+
+    const { data } = await axios.get(`/api/orders/myorders`, config);
+
     dispatch({
       type: ORDER_LIST_MY_SUCCESS,
       payload: data,
     });
   } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === "Not authorized, token failed") {
+      dispatch(logout());
+    }
     dispatch({
       type: ORDER_LIST_MY_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      payload: message,
     });
   }
 };
@@ -131,7 +135,11 @@ export const payOrder = (orderId, paymentResult) => async (
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.put(`/api/orders/${orderId}/pay`, paymentResult ,config);
+    const { data } = await axios.put(
+      `/api/orders/${orderId}/pay`,
+      paymentResult,
+      config
+    );
     dispatch({
       type: ORDER_PAY_SUCCESS,
       payload: data,
